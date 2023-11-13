@@ -1,0 +1,9 @@
+name: elasticsearch
+repository: ddev/ddev-elasticsearch
+version: v0.3.1
+install_date: "2023-11-03T21:06:51+01:00"
+project_files:
+    - elasticsearch/
+    - docker-compose.elasticsearch.yaml
+global_files: []
+removal_actions: []

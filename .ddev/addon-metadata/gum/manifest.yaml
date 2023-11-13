@@ -1,0 +1,10 @@
+name: gum
+repository: Morgy93/ddev-gum
+version: 1.2.0
+install_date: "2023-10-14T18:36:32+02:00"
+project_files:
+    - commands/web/gum
+    - config.gum.yaml
+    - web-build/pre.Dockerfile.gum
+global_files: []
+removal_actions: []

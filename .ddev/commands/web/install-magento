@@ -1,0 +1,137 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Installs magento
+## Usage: install-magento
+## Example: ddev install-magento
+
+##################
+# error handling #
+##################
+
+# Exit on error
+set -e
+
+# Handle errors
+function handle_error() {
+    printf "\n\n"
+    echo "An error occurred. Exiting..."
+    exit 1
+}
+
+# Trap errors
+trap 'handle_error' ERR
+
+#############
+# variables #
+#############
+
+# The name of the .env file
+ENV_FILE=".env"
+# The name of the .env.sample file
+ENV_FILE_SAMPLE=".env.sample"
+# The name of the temporary folder where Magento will be downloaded
+MAGENTO_FOLDER_TMP="magento2-temp"
+# Whether to proceed with installation using the existing .env file
+PROCEED_TO_INSTALL=false
+# The name of the project to install
+PROJECT="magento/project-community-edition"
+
+########
+# code #
+########
+
+printf "\n"
+
+# Check if the .env file exists
+if [ -f ${ENV_FILE} ]; then
+    PROCEED_TO_INSTALL=true
+    # Ask the user if they want to use the existing .env file for installation
+    gum confirm "The ${ENV_FILE} file exists. Do you want to use it for installation?" || PROCEED_TO_INSTALL=false
+fi
+
+# Check the install mode
+if [ "${PROCEED_TO_INSTALL}" = false ]; then
+    echo "Do you want to perform an interactive installation or edit the ${ENV_FILE} file manually?"
+    INSTALL_MODE=$(gum choose "Interactive" "Manual")
+    echo "Using ${INSTALL_MODE} install mode."
+
+    # Copy the .env.sample file to the .env file
+    cp ${ENV_FILE_SAMPLE} ${ENV_FILE}
+
+    if [ "${INSTALL_MODE}" = "Interactive" ]; then
+        # Edit the .env file interactively
+        source "./.ddev/commands/web/edit-env"
+    else
+        gum style --margin "1 1" --padding "1 1" --border "double" \
+            "The ${ENV_FILE_SAMPLE} file has been copied to ${ENV_FILE}." \
+            "You can now manually edit the ${ENV_FILE} file to customize your installation." \
+            "After editing, please run 'ddev install-magento' again and choose to use the existing ${ENV_FILE} file."
+        exit 0
+    fi
+fi
+
+# Load the environment variables from the .env file
+# shellcheck source=.env
+source ${ENV_FILE}
+
+# Remove the temporary Magento folder
+rm -rf "${MAGENTO_FOLDER_TMP}"
+
+# Download Magento
+if [ -n "$MAGENTO_VERSION" ]; then
+    PROJECT="${PROJECT}:${MAGENTO_VERSION}"
+fi
+composer create-project \
+    --repository-url="${MAGENTO_REPOSITORY_URL}" \
+    "${PROJECT}" \
+    ${MAGENTO_FOLDER_TMP}
+
+# Delete all files and directories inside the MAGENTO_FOLDER directory
+find "${MAGENTO_FOLDER}" -mindepth 1 -delete || true
+
+# Copy everything from the temporary Magento folder to the Magento folder
+cp -r "${MAGENTO_FOLDER_TMP}"/* "${MAGENTO_FOLDER}"
+
+# Remove the temporary Magento folder
+rm -rf "${MAGENTO_FOLDER_TMP}"
+
+# Change to the Magento folder directory
+cd "${MAGENTO_FOLDER}" || exit 1
+
+# Install Magento
+bin/magento setup:install \
+    --admin-email=admin@"${DDEV_HOSTNAME}" \
+    --admin-firstname=DDEV \
+    --admin-lastname=Magento2 \
+    --admin-password="${MAGENTO_ADMIN_PASSWORD}" \
+    --admin-user="{$MAGENTO_ADMIN_USER}" \
+    --backend-frontname="${MAGENTO_BACKEND_FRONTNAME}" \
+    --cache-backend-redis-server=redis \
+    --cleanup-database \
+    --db-host=db \
+    --db-name="${MAGENTO_DB_NAME}" \
+    --db-password=db \
+    --db-user=db \
+    --elasticsearch-host=elasticsearch \
+    --elasticsearch-port=9200 \
+    --page-cache-redis-server=redis \
+    --search-engine=elasticsearch7 \
+    --session-save-redis-host=redis
+
+# Set Magento configuration
+bin/magento config:set general/locale/code "${MAGENTO_LOCALE}"
+bin/magento config:set web/unsecure/base_url "${DDEV_PRIMARY_URL}"/
+
+# Install sample data if requested
+if [ "${MAGENTO_SAMPLE_DATA}" = "yes" ]; then
+    bin/magento sampledata:deploy
+    bin/magento setup:upgrade
+fi
+
+# Output installation information
+gum style --margin "1 1" --padding "1 1" --border "double" \
+    "Frontend URL:   ${DDEV_PRIMARY_URL}" \
+    "Backend URL:    ${DDEV_PRIMARY_URL}/${MAGENTO_BACKEND_FRONTNAME}" \
+    "Admin Username: ${MAGENTO_ADMIN_USER}" \
+    "Admin Password: ${MAGENTO_ADMIN_PASSWORD}"

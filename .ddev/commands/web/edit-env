@@ -1,0 +1,59 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Edites .env file
+## Usage: edit-env
+## Example: ddev edit-env
+
+#############
+# variables #
+#############
+
+# The name of the .env file
+ENV_FILE=".env"
+
+# The default locale code
+DEFAULT_LOCALE="en_US"
+
+########
+# code #
+########
+
+printf "\n"
+
+echo "Which repository do you want to use?"
+echo "Note: magento.com is the official repository which requires Magento authentication keys, mage-os.org is a mirror without authentication keys."
+MAGENTO_REPOSITORY_URL=$(gum choose "https://mirror.mage-os.org/" "https://repo.magento.com/")
+echo "Using repository: ${MAGENTO_REPOSITORY_URL}"
+sed -i "s|MAGENTO_REPOSITORY_URL=.*|MAGENTO_REPOSITORY_URL=\"${MAGENTO_REPOSITORY_URL}\"|" "${ENV_FILE}"
+
+printf "\n"
+
+echo "What version do you want to use?"
+MAGENTO_VERSION=$(gum input --placeholder="e.g. 2.4.6-p3 or leave empty for latest")
+if [ -z "$MAGENTO_VERSION" ]; then
+    echo "Using latest version"
+else
+    echo "Using version: ${MAGENTO_VERSION}"
+    sed -i "s/MAGENTO_VERSION=.*/MAGENTO_VERSION=\"${MAGENTO_VERSION}\"/" "${ENV_FILE}"
+fi
+
+printf "\n"
+
+echo "Which locale code do you want to use?"
+MAGENTO_LOCALE=$(gum input --placeholder="e.g. de_DE or leave empty for ${DEFAULT_LOCALE}")
+if [ -z "$MAGENTO_LOCALE" ]; then
+    echo "Using ${DEFAULT_LOCALE}"
+else
+    echo "Using locale: ${MAGENTO_LOCALE}"
+    sed -i "s/MAGENTO_LOCALE=.*/MAGENTO_LOCALE=\"${MAGENTO_LOCALE}\"/" "${ENV_FILE}"
+fi
+
+printf "\n"
+
+echo "Do you want to use sample data?"
+MAGENTO_SAMPLE_DATA=$(gum choose "yes" "no")
+echo "Using sample data: ${MAGENTO_SAMPLE_DATA}"
+sed -i "s/MAGENTO_SAMPLE_DATA=.*/MAGENTO_SAMPLE_DATA=\"${MAGENTO_SAMPLE_DATA}\"/" "${ENV_FILE}"
+
+printf "\n"
