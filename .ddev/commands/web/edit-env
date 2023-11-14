@@ -58,6 +58,13 @@ sed -i "s/MAGENTO_SAMPLE_DATA=.*/MAGENTO_SAMPLE_DATA=\"${MAGENTO_SAMPLE_DATA}\"/
 
 printf "\n"
 
+echo "Do you want to use web server rewrites?"
+MAGENTO_USE_WEB_SERVER_REWRITES=$(gum choose "yes" "no")
+echo "Use web server rewrites: ${MAGENTO_USE_WEB_SERVER_REWRITES}"
+sed -i "s/MAGENTO_USE_WEB_SERVER_REWRITES=.*/MAGENTO_USE_WEB_SERVER_REWRITES=\"${MAGENTO_USE_WEB_SERVER_REWRITES}\"/" "${ENV_FILE}"
+
+printf "\n"
+
 echo "Do you want to disable two-factor authentication?"
 MAGENTO_DISABLE_TWO_FACTOR_AUTH=$(gum choose "yes" "no")
 echo "Disable two-factor authentication: ${MAGENTO_DISABLE_TWO_FACTOR_AUTH}"

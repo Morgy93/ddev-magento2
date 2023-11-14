@@ -134,6 +134,10 @@ ${MAGENTO_CLI} setup:install \
 ${MAGENTO_CLI} config:set general/locale/code "${MAGENTO_LOCALE}"
 ${MAGENTO_CLI} config:set web/unsecure/base_url "${DDEV_PRIMARY_URL}"/
 
+if [ "${MAGENTO_USE_WEB_SERVER_REWRITES}" = "yes" ]; then
+    ${MAGENTO_CLI} config:set web/seo/use_rewrites 1
+fi
+
 if [ "${MAGENTO_DISABLE_TWO_FACTOR_AUTH}" = "yes" ]; then
     ${MAGENTO_CLI} module:disable Magento_AdminAdobeImsTwoFactorAuth Magento_TwoFactorAuth
 fi
