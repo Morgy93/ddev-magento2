@@ -109,6 +109,9 @@ ${MAGENTO_CLI} setup:install \
     --admin-password="${MAGENTO_ADMIN_PASSWORD}" \
     --admin-user="${MAGENTO_ADMIN_USER}" \
     --backend-frontname="${MAGENTO_BACKEND_FRONTNAME}" \
+    --cache-backend=redis \
+    --cache-backend-redis-db=0 \
+    --cache-backend-redis-password=redis \
     --cache-backend-redis-server=redis \
     --cleanup-database \
     --db-host=db \
@@ -117,8 +120,14 @@ ${MAGENTO_CLI} setup:install \
     --db-user=db \
     --elasticsearch-host=elasticsearch \
     --elasticsearch-port=9200 \
+    --page-cache=redis \
+    --page-cache-redis-db=1 \
+    --page-cache-redis-password=redis \
     --page-cache-redis-server=redis \
     --search-engine=elasticsearch7 \
+    --session-save=redis \
+    --session-save-redis-db=2 \
+    --session-save-redis-password=redis \
     --session-save-redis-host=redis
 
 # Set Magento configuration
