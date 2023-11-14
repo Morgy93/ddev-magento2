@@ -30,6 +30,8 @@ trap 'handle_error' ERR
 ENV_FILE=".env"
 # The name of the .env.sample file
 ENV_FILE_SAMPLE=".env.sample"
+# The Magento CLI command
+MAGENTO_CLI="bin/magento"
 # The name of the temporary folder where Magento will be downloaded
 MAGENTO_FOLDER_TMP="magento2-temp"
 # Whether to proceed with installation using the existing .env file
@@ -100,7 +102,7 @@ rm -rf "${MAGENTO_FOLDER_TMP}"
 cd "${MAGENTO_FOLDER}" || exit 1
 
 # Install Magento
-bin/magento setup:install \
+${MAGENTO_CLI} setup:install \
     --admin-email=admin@"${DDEV_HOSTNAME}" \
     --admin-firstname=DDEV \
     --admin-lastname=Magento2 \
@@ -120,13 +122,13 @@ bin/magento setup:install \
     --session-save-redis-host=redis
 
 # Set Magento configuration
-bin/magento config:set general/locale/code "${MAGENTO_LOCALE}"
-bin/magento config:set web/unsecure/base_url "${DDEV_PRIMARY_URL}"/
+${MAGENTO_CLI} config:set general/locale/code "${MAGENTO_LOCALE}"
+${MAGENTO_CLI} config:set web/unsecure/base_url "${DDEV_PRIMARY_URL}"/
 
 # Install sample data if requested
 if [ "${MAGENTO_SAMPLE_DATA}" = "yes" ]; then
-    bin/magento sampledata:deploy
-    bin/magento setup:upgrade
+    ${MAGENTO_CLI} sampledata:deploy
+    ${MAGENTO_CLI} setup:upgrade
 fi
 
 # Output installation information
