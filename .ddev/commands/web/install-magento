@@ -107,7 +107,7 @@ ${MAGENTO_CLI} setup:install \
     --admin-firstname=DDEV \
     --admin-lastname=Magento2 \
     --admin-password="${MAGENTO_ADMIN_PASSWORD}" \
-    --admin-user="{$MAGENTO_ADMIN_USER}" \
+    --admin-user="${MAGENTO_ADMIN_USER}" \
     --backend-frontname="${MAGENTO_BACKEND_FRONTNAME}" \
     --cache-backend-redis-server=redis \
     --cleanup-database \
