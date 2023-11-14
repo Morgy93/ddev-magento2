@@ -125,6 +125,10 @@ ${MAGENTO_CLI} setup:install \
 ${MAGENTO_CLI} config:set general/locale/code "${MAGENTO_LOCALE}"
 ${MAGENTO_CLI} config:set web/unsecure/base_url "${DDEV_PRIMARY_URL}"/
 
+if [ "${MAGENTO_DISABLE_TWO_FACTOR_AUTH}" = "yes" ]; then
+    ${MAGENTO_CLI} module:disable Magento_AdminAdobeImsTwoFactorAuth Magento_TwoFactorAuth
+fi
+
 # Install sample data if requested
 if [ "${MAGENTO_SAMPLE_DATA}" = "yes" ]; then
     ${MAGENTO_CLI} sampledata:deploy

@@ -57,3 +57,10 @@ echo "Using sample data: ${MAGENTO_SAMPLE_DATA}"
 sed -i "s/MAGENTO_SAMPLE_DATA=.*/MAGENTO_SAMPLE_DATA=\"${MAGENTO_SAMPLE_DATA}\"/" "${ENV_FILE}"
 
 printf "\n"
+
+echo "Do you want to disable two-factor authentication?"
+MAGENTO_DISABLE_TWO_FACTOR_AUTH=$(gum choose "yes" "no")
+echo "Disable two-factor authentication: ${MAGENTO_DISABLE_TWO_FACTOR_AUTH}"
+sed -i "s/MAGENTO_DISABLE_TWO_FACTOR_AUTH=.*/MAGENTO_DISABLE_TWO_FACTOR_AUTH=\"${MAGENTO_DISABLE_TWO_FACTOR_AUTH}\"/" "${ENV_FILE}"
+
+printf "\n"
