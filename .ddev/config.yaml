@@ -10,6 +10,7 @@ database:
     type: mariadb
     version: "10.6"
 use_dns_when_possible: true
+composer_root: magento2/
 composer_version: "2"
 disable_settings_management: true
 web_environment: []
